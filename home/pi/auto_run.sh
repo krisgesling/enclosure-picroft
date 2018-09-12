@@ -77,8 +77,7 @@ function network_setup() {
                 echo "        ssid=\"$user_ssid\"" | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
                 echo "        psk=\"$user_pwd\"" | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
                 echo "}" | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
-                reset_wlan0=1
-                break
+                reset_wlan0=5
             else
                 show_prompt=1
             fi
@@ -95,7 +94,6 @@ function network_setup() {
                 echo "        key_mgmt=NONE" | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
                 echo "}" | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
                 reset_wlan0=5
-                break
             else
                 show_prompt=1
             fi
@@ -103,7 +101,6 @@ function network_setup() {
          3)
             sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
             reset_wlan0=5
-            break
             ;;
          4)
             should_reboot=1
@@ -119,20 +116,36 @@ function network_setup() {
         then
             if [[ $reset_wlan0 -eq 5 ]]
             then
-                echo "Reconfiguring WLAN0..."
+                echo -n "Reconfiguring WLAN0..."
                 wpa_cli -i wlan0 reconfigure
                 show_prompt=1
-                sleep 3
+                reset_wlan0=4
+                echo -n "Detecting network connection."
+                sleep 1
+                echo -n "."
+                sleep 1
+                echo -n "."
+                sleep 1
+                echo -n "."
+                sleep 1
+                echo -n "."
+                sleep 1
+                echo -n "."
+                sleep 1
+                echo -n "."
+                sleep 1
+                echo -n "."
+                sleep 1
+                echo -n "."
+                sleep 1
             elif [[ $reset_wlan0 -eq 1 ]]
             then
-                echo "Failed to connect to network."
+                echo "failed to connect to network."
                 show_prompt=1
             else
                 # decrement the counter
                 reset_wlan0= expr $reset_wlan0 - 1
             fi
-
-            $reset_wlan0=4
         fi
 
     done
@@ -141,7 +154,7 @@ function network_setup() {
     then
         # Auto-detected
         echo
-        echo "Network connection detected!"
+        echo "connection detected!"
         should_reboot=0
     fi
 
